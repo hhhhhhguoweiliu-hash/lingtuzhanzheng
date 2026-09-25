@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example
+media/
+references/frames/
+*.mp4
+*.part01
+*.part02
+*.assembling

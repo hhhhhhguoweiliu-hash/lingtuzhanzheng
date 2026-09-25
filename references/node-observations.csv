@@ -1,0 +1,13 @@
+node_id,source,requested_second,approx_x_px,approx_y_px,visible_army,visible_owner,symbol,status,note
+L_SW,1000042572.mp4,1,117,786,186,blue,circle,draft,第一秒已发生行动_不可当起始兵力
+L_N,1000042572.mp4,1,226,417,200,brown,character,draft,中心与文字锚点需区分
+L_E,1000042572.mp4,1,476,630,200,magenta,character,draft,原帧可见
+L_NE1,1000042572.mp4,1,301,408,125,neutral,white_circle,draft,原帧可见
+L_NE2,1000042572.mp4,1,389,407,125,neutral,white_circle,draft,原帧可见
+L_NE3,1000042572.mp4,1,528,453,125,neutral,white_circle,draft,原帧可见
+L_HEX_NW,1000042572.mp4,1,167,502,125,neutral,hexagon,draft,有覆盖圈_效果未知
+L_BONUS,1000042572.mp4,1,381,589,125,neutral,white_circle_plus100,draft,加100图标不证明点击效果
+L_HEX_C,1000042572.mp4,1,277,640,125,neutral,hexagon,draft,有覆盖圈_效果未知
+L_W,1000042572.mp4,1,142,631,125,neutral,white_circle,draft,兵流经过可能遮挡
+L_SE,1000042572.mp4,1,422,710,125,neutral,white_circle,draft,原帧可见
+L_S,1000042572.mp4,1,358,771,125,neutral,white_circle,draft,原帧可见

@@ -1,0 +1,65 @@
+{
+  "version": 2,
+  "sources": [
+    {
+      "sourceId": "L",
+      "filename": "1000042572.mp4",
+      "width": 720,
+      "height": 1372,
+      "durationSeconds": 257.034434,
+      "bytes": 110360599,
+      "sha256": "22177a9ff18e8cc72162a47891caa90f5eb2bf18dbb89ed9fe7c724ac680e350",
+      "probeStatus": "decoded",
+      "driveUrl": null,
+      "binaryParts": [
+        {
+          "order": 1,
+          "filename": "1000042572.mp4.part01",
+          "bytes": 62914560,
+          "sha256": "7309cffeb883c027a3e510b27b45c68810e6872be1de566c5e0781dba3a39827",
+          "driveUrl": "https://drive.google.com/file/d/15sI_2IIuAzfwBjXcUuH11TZnw4BfuTS8/view"
+        },
+        {
+          "order": 2,
+          "filename": "1000042572.mp4.part02",
+          "bytes": 47446039,
+          "sha256": "518bf73aeffadb49f2a96fdf9c6bc8caabdd4ee5be720dc33435e73c297822f6",
+          "driveUrl": "https://drive.google.com/file/d/1ZPHnW1lOfU1wbrOk_xaNIBdU9LJKY4jY/view"
+        }
+      ],
+      "reviewProxy": {
+        "filename": "1000042572_review_540p.mp4",
+        "width": 540,
+        "driveUrl": "https://drive.google.com/file/d/1i7jT82we9Ug5ZAw-dNv7HDdDvQ-Hby9p/view",
+        "use": "审阅用转码；正式量测用拼接原片"
+      }
+    },
+    {
+      "sourceId": "S",
+      "filename": "1000042571.mp4",
+      "width": 720,
+      "height": 1372,
+      "durationSeconds": 60.996496,
+      "bytes": 9491151,
+      "sha256": "60728be8325df6b7025865af601f3a32e86da1e4171ae6f20a1daaf9c7e2941a",
+      "probeStatus": "decoded",
+      "driveUrl": "https://drive.google.com/file/d/1zDMKEHJo3m5wqleofHxFAJSQ-yO2URYp/view"
+    },
+    {
+      "sourceId": "A",
+      "filename": "1000042460.mp4",
+      "availability": "current_copy_corrupt",
+      "historicalDurationSeconds": 213.141333,
+      "historicalDimensions": [
+        584,
+        1280
+      ],
+      "localBytes": 42479616,
+      "localSha256": "4f270b459efe56edc30661c921b48143d82ba0f383f8b15085741ef5167e91b4",
+      "probeError": "moov atom not found",
+      "uploaded": false,
+      "note": "尺寸和时长来自之前成功读取，本轮未重新验证。缺失原件不阻塞L场景。"
+    }
+  ],
+  "timingPolicy": "Use decoded PTS. Do not derive timing from malformed r_frame_rate."
+}

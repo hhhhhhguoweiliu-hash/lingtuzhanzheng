@@ -1,0 +1,86 @@
+[
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 0,
+    "file": "references/frames/L_000s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 1,
+    "file": "references/frames/L_001s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 8,
+    "file": "references/frames/L_008s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 10,
+    "file": "references/frames/L_010s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 13,
+    "file": "references/frames/L_013s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 52,
+    "file": "references/frames/L_052s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 104,
+    "file": "references/frames/L_104s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 143,
+    "file": "references/frames/L_143s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 208,
+    "file": "references/frames/L_208s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042572.mp4",
+    "requested_time_seconds": 247,
+    "file": "references/frames/L_247s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042571.mp4",
+    "requested_time_seconds": 0,
+    "file": "references/frames/S_000s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042571.mp4",
+    "requested_time_seconds": 20,
+    "file": "references/frames/S_020s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042571.mp4",
+    "requested_time_seconds": 40,
+    "file": "references/frames/S_040s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  },
+  {
+    "source": "1000042571.mp4",
+    "requested_time_seconds": 55,
+    "file": "references/frames/S_055s.jpg",
+    "timestamp_note": "按时间 seek 的最近解码帧；测量时请读取原始 PTS"
+  }
+]
