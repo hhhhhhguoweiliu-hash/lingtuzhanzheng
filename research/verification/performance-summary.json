@@ -1,0 +1,41 @@
+{
+  "method": "Frame-count-weighted mean; omit boundary samples with one frame. Not a phone benchmark. Concurrent verification load present.",
+  "phases": [
+    {
+      "packets": 200,
+      "weightedMeanFps": 51.28,
+      "windowFpsRange": [
+        45.14,
+        59.56
+      ],
+      "windowP95MsRange": [
+        16.9,
+        33.5
+      ]
+    },
+    {
+      "packets": 1000,
+      "weightedMeanFps": 43.99,
+      "windowFpsRange": [
+        31.73,
+        59.96
+      ],
+      "windowP95MsRange": [
+        16.9,
+        35.8
+      ]
+    },
+    {
+      "packets": 5000,
+      "weightedMeanFps": 44.52,
+      "windowFpsRange": [
+        35.73,
+        51.76
+      ],
+      "windowP95MsRange": [
+        33.3,
+        33.6
+      ]
+    }
+  ]
+}

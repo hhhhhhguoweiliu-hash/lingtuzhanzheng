@@ -1,0 +1,350 @@
+{
+  "errors": [],
+  "snapshots": [
+    {
+      "name": "opening",
+      "tick": 2,
+      "seconds": 0.06666666666666667,
+      "packets": 0,
+      "visualUnits": 0,
+      "nodes": [
+        {
+          "id": "L_SW",
+          "owner": "blue",
+          "garrison": 200
+        },
+        {
+          "id": "L_N",
+          "owner": "brown",
+          "garrison": 200
+        },
+        {
+          "id": "L_E",
+          "owner": "magenta",
+          "garrison": 200
+        },
+        {
+          "id": "L_NE1",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_NE2",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_NE3",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_SE",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_HEX_NW",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_W",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_HEX_C",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_BONUS",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_S",
+          "owner": "neutral",
+          "garrison": 125
+        }
+      ]
+    },
+    {
+      "name": "single-stream",
+      "tick": 184,
+      "seconds": 6.133333333333334,
+      "packets": 11,
+      "visualUnits": 55,
+      "nodes": [
+        {
+          "id": "L_SW",
+          "owner": "blue",
+          "garrison": 194
+        },
+        {
+          "id": "L_N",
+          "owner": "brown",
+          "garrison": 244
+        },
+        {
+          "id": "L_E",
+          "owner": "magenta",
+          "garrison": 244
+        },
+        {
+          "id": "L_NE1",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_NE2",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_NE3",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_SE",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_HEX_NW",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_W",
+          "owner": "neutral",
+          "garrison": 93
+        },
+        {
+          "id": "L_HEX_C",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_BONUS",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_S",
+          "owner": "neutral",
+          "garrison": 125
+        }
+      ]
+    },
+    {
+      "name": "capture",
+      "tick": 1034,
+      "seconds": 34.46666666666667,
+      "packets": 22,
+      "visualUnits": 107,
+      "nodes": [
+        {
+          "id": "L_SW",
+          "owner": "blue",
+          "garrison": 249
+        },
+        {
+          "id": "L_N",
+          "owner": "brown",
+          "garrison": 132
+        },
+        {
+          "id": "L_E",
+          "owner": "magenta",
+          "garrison": 241
+        },
+        {
+          "id": "L_NE1",
+          "owner": "brown",
+          "garrison": 75
+        },
+        {
+          "id": "L_NE2",
+          "owner": "neutral",
+          "garrison": 29
+        },
+        {
+          "id": "L_NE3",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_SE",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_HEX_NW",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_W",
+          "owner": "blue",
+          "garrison": 52
+        },
+        {
+          "id": "L_HEX_C",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_BONUS",
+          "owner": "magenta",
+          "garrison": 55
+        },
+        {
+          "id": "L_S",
+          "owner": "neutral",
+          "garrison": 125
+        }
+      ]
+    },
+    {
+      "name": "multi-battle",
+      "tick": 1407,
+      "seconds": 46.9,
+      "packets": 53,
+      "visualUnits": 258,
+      "nodes": [
+        {
+          "id": "L_SW",
+          "owner": "blue",
+          "garrison": 241
+        },
+        {
+          "id": "L_N",
+          "owner": "brown",
+          "garrison": 114
+        },
+        {
+          "id": "L_E",
+          "owner": "magenta",
+          "garrison": 237
+        },
+        {
+          "id": "L_NE1",
+          "owner": "brown",
+          "garrison": 77
+        },
+        {
+          "id": "L_NE2",
+          "owner": "magenta",
+          "garrison": 12
+        },
+        {
+          "id": "L_NE3",
+          "owner": "magenta",
+          "garrison": 26
+        },
+        {
+          "id": "L_SE",
+          "owner": "neutral",
+          "garrison": 125
+        },
+        {
+          "id": "L_HEX_NW",
+          "owner": "blue",
+          "garrison": 60
+        },
+        {
+          "id": "L_W",
+          "owner": "blue",
+          "garrison": 94
+        },
+        {
+          "id": "L_HEX_C",
+          "owner": "neutral",
+          "garrison": 120
+        },
+        {
+          "id": "L_BONUS",
+          "owner": "magenta",
+          "garrison": 60
+        },
+        {
+          "id": "L_S",
+          "owner": "neutral",
+          "garrison": 125
+        }
+      ]
+    },
+    {
+      "name": "late-battle",
+      "tick": 2473,
+      "seconds": 82.43333333333334,
+      "packets": 54,
+      "visualUnits": 210,
+      "nodes": [
+        {
+          "id": "L_SW",
+          "owner": "blue",
+          "garrison": 244
+        },
+        {
+          "id": "L_N",
+          "owner": "brown",
+          "garrison": 213
+        },
+        {
+          "id": "L_E",
+          "owner": "magenta",
+          "garrison": 250
+        },
+        {
+          "id": "L_NE1",
+          "owner": "blue",
+          "garrison": 50
+        },
+        {
+          "id": "L_NE2",
+          "owner": "blue",
+          "garrison": 9
+        },
+        {
+          "id": "L_NE3",
+          "owner": "brown",
+          "garrison": 154
+        },
+        {
+          "id": "L_SE",
+          "owner": "blue",
+          "garrison": 227
+        },
+        {
+          "id": "L_HEX_NW",
+          "owner": "blue",
+          "garrison": 244
+        },
+        {
+          "id": "L_W",
+          "owner": "blue",
+          "garrison": 222
+        },
+        {
+          "id": "L_HEX_C",
+          "owner": "blue",
+          "garrison": 61
+        },
+        {
+          "id": "L_BONUS",
+          "owner": "brown",
+          "garrison": 88
+        },
+        {
+          "id": "L_S",
+          "owner": "blue",
+          "garrison": 164
+        }
+      ]
+    }
+  ]
+}

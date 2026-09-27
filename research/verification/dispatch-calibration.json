@@ -1,0 +1,713 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-27T20:39:05.605Z",
+  "seed": 731,
+  "sourceId": "L_SW",
+  "targetId": "L_W",
+  "sourceFilesSha256": {
+    "src/main.ts": "206f1da4dafd5d4439cd24151fe18390558312fe0e4055a94740a0619e33b49b",
+    "src/sim/engine.ts": "e1271adb6802f4e55df2c034e4e3af3af84c4cbf8fea53a65890d225b1614b7e",
+    "src/sim/types.ts": "6e949243681cc93a4b7836f6ec8e93871e67fc1ca12244d694e889b0888526be",
+    "src/maps/long.ts": "85d735d2f39d87cd09da8cae2cff7279c807d75b8d9f254c21c232154a55b2f8"
+  },
+  "sourceFilesUnchangedDuringRun": true,
+  "sourceConfigLiteral": "{productionPerSecond:11,productionByOwner:{blue:13.7},neutralProductionPerSecond:7,neutralProductionCap:125,emitUnitsPerSecond:16,packetUnits:5,movementSpeed:80,routeMode:'any-visible',aiThinkSeconds:1.8,aiReserveMargin:12}",
+  "effectiveConfig": {
+    "tickRate": 30,
+    "playerOwner": "blue",
+    "aiEnabled": false,
+    "playerAI": false,
+    "productionPerSecond": 11,
+    "productionByOwner": {
+      "blue": 13.7
+    },
+    "neutralProductionPerSecond": 7,
+    "neutralProductionCap": 125,
+    "productionCap": 250,
+    "emitUnitsPerSecond": 16,
+    "packetUnits": 5,
+    "movementSpeed": 80,
+    "routeMode": "any-visible",
+    "aiThinkSeconds": 1.8,
+    "aiReserveMargin": 12,
+    "requireAllTerritories": false,
+    "maxLedgerEvents": 2000
+  },
+  "mapHash": "0177ce50",
+  "horizonSeconds": 90,
+  "protocol": {
+    "initialCommandTick": 0,
+    "fraction": 1,
+    "initialSourceUnits": 200,
+    "initialTargetUnits": 125,
+    "otherFactionsPresentButAiDisabled": true,
+    "repeatingRule": "Before each next tick, if this source has no queue and has available units, submit another 100% fixed-budget command to W; continue after capture as reinforcement.",
+    "snapshot20Timing": "After completing tick 600, before any next command at time 20.",
+    "noSourceCodeChanges": true,
+    "noSpecialTowerDamageOrSlowdown": true
+  },
+  "videoReference": {
+    "source": "L / 1000042572.mp4",
+    "observedWCaptureWindowSeconds": [
+      16.5,
+      17
+    ],
+    "timingAlignment": "Video starts mid-action with SW187; experiment starts with SW200 and a command at tick0. Treat comparison as approximate local calibration, not identical input replay.",
+    "meaning": "Repeat policy is an explicit input hypothesis, not proof of permanent automatic channels in the original."
+  },
+  "results": [
+    {
+      "policy": "single_fixed_budget",
+      "commandLog": [
+        {
+          "tick": 0,
+          "seconds": 0,
+          "units": 200
+        }
+      ],
+      "firstCapture": null,
+      "firstEmissionSeconds": 0.3333333333333333,
+      "lastEmissionSeconds": 12.5,
+      "firstArrivalSeconds": 2.3,
+      "initialQueueEmptySeconds": 12.5,
+      "atVideoCapture17": {
+        "tick": 510,
+        "seconds": 17,
+        "source": {
+          "owner": "blue",
+          "garrison": 232,
+          "reserved": 0,
+          "available": 232
+        },
+        "target": {
+          "owner": "neutral",
+          "garrison": 27
+        },
+        "emittedUnits": 200,
+        "emittedPackets": 40,
+        "acceptedCommands": 1,
+        "inTransitUnits": 0,
+        "queuedUnits": 0,
+        "sourceProduced": 232,
+        "targetNeutralProduced": 102,
+        "totalGarrison": 1759,
+        "totalInTransit": 0,
+        "stats": {
+          "initialUnits": 1725,
+          "produced": 434,
+          "rewarded": 0,
+          "casualties": 400,
+          "captures": 0,
+          "commands": 1
+        },
+        "stateHash": "8ee683ff"
+      },
+      "at20": {
+        "tick": 600,
+        "seconds": 20,
+        "source": {
+          "owner": "blue",
+          "garrison": 250,
+          "reserved": 0,
+          "available": 250
+        },
+        "target": {
+          "owner": "neutral",
+          "garrison": 48
+        },
+        "emittedUnits": 200,
+        "emittedPackets": 40,
+        "acceptedCommands": 1,
+        "inTransitUnits": 0,
+        "queuedUnits": 0,
+        "sourceProduced": 250,
+        "targetNeutralProduced": 123,
+        "totalGarrison": 1798,
+        "totalInTransit": 0,
+        "stats": {
+          "initialUnits": 1725,
+          "produced": 473,
+          "rewarded": 0,
+          "casualties": 400,
+          "captures": 0,
+          "commands": 1
+        },
+        "stateHash": "0bec0361"
+      },
+      "capturedBy90Seconds": false,
+      "at90": {
+        "tick": 2700,
+        "seconds": 90,
+        "source": {
+          "owner": "blue",
+          "garrison": 250,
+          "reserved": 0,
+          "available": 250
+        },
+        "target": {
+          "owner": "neutral",
+          "garrison": 125
+        },
+        "emittedUnits": 200,
+        "emittedPackets": 40,
+        "acceptedCommands": 1,
+        "inTransitUnits": 0,
+        "queuedUnits": 0,
+        "sourceProduced": 250,
+        "targetNeutralProduced": 200,
+        "totalGarrison": 1875,
+        "totalInTransit": 0,
+        "stats": {
+          "initialUnits": 1725,
+          "produced": 550,
+          "rewarded": 0,
+          "casualties": 400,
+          "captures": 0,
+          "commands": 1
+        },
+        "stateHash": "9f73a1ec"
+      },
+      "conservation": {
+        "status": "PASS",
+        "checkedEveryTick": true,
+        "invariantChecks": 2702
+      }
+    },
+    {
+      "policy": "repeat_when_source_queue_empty",
+      "commandLog": [
+        {
+          "tick": 0,
+          "seconds": 0,
+          "units": 200
+        },
+        {
+          "tick": 375,
+          "seconds": 12.5,
+          "units": 171
+        },
+        {
+          "tick": 696,
+          "seconds": 23.2,
+          "units": 146
+        },
+        {
+          "tick": 970,
+          "seconds": 32.333333333333336,
+          "units": 125
+        },
+        {
+          "tick": 1204,
+          "seconds": 40.13333333333333,
+          "units": 107
+        },
+        {
+          "tick": 1405,
+          "seconds": 46.833333333333336,
+          "units": 92
+        },
+        {
+          "tick": 1577,
+          "seconds": 52.56666666666667,
+          "units": 79
+        },
+        {
+          "tick": 1725,
+          "seconds": 57.5,
+          "units": 67
+        },
+        {
+          "tick": 1851,
+          "seconds": 61.7,
+          "units": 58
+        },
+        {
+          "tick": 1960,
+          "seconds": 65.33333333333333,
+          "units": 50
+        },
+        {
+          "tick": 2054,
+          "seconds": 68.46666666666667,
+          "units": 42
+        },
+        {
+          "tick": 2132,
+          "seconds": 71.06666666666666,
+          "units": 36
+        },
+        {
+          "tick": 2200,
+          "seconds": 73.33333333333333,
+          "units": 31
+        },
+        {
+          "tick": 2258,
+          "seconds": 75.26666666666667,
+          "units": 27
+        },
+        {
+          "tick": 2309,
+          "seconds": 76.96666666666667,
+          "units": 23
+        },
+        {
+          "tick": 2352,
+          "seconds": 78.4,
+          "units": 20
+        },
+        {
+          "tick": 2389,
+          "seconds": 79.63333333333334,
+          "units": 16
+        },
+        {
+          "tick": 2419,
+          "seconds": 80.63333333333334,
+          "units": 14
+        },
+        {
+          "tick": 2445,
+          "seconds": 81.5,
+          "units": 12
+        },
+        {
+          "tick": 2468,
+          "seconds": 82.26666666666667,
+          "units": 11
+        },
+        {
+          "tick": 2489,
+          "seconds": 82.96666666666667,
+          "units": 9
+        },
+        {
+          "tick": 2505,
+          "seconds": 83.5,
+          "units": 7
+        },
+        {
+          "tick": 2519,
+          "seconds": 83.96666666666667,
+          "units": 7
+        },
+        {
+          "tick": 2532,
+          "seconds": 84.4,
+          "units": 6
+        },
+        {
+          "tick": 2543,
+          "seconds": 84.76666666666667,
+          "units": 5
+        },
+        {
+          "tick": 2552,
+          "seconds": 85.06666666666666,
+          "units": 4
+        },
+        {
+          "tick": 2560,
+          "seconds": 85.33333333333333,
+          "units": 4
+        },
+        {
+          "tick": 2567,
+          "seconds": 85.56666666666666,
+          "units": 3
+        },
+        {
+          "tick": 2573,
+          "seconds": 85.76666666666667,
+          "units": 3
+        },
+        {
+          "tick": 2579,
+          "seconds": 85.96666666666667,
+          "units": 2
+        },
+        {
+          "tick": 2582,
+          "seconds": 86.06666666666666,
+          "units": 2
+        },
+        {
+          "tick": 2586,
+          "seconds": 86.2,
+          "units": 1
+        },
+        {
+          "tick": 2588,
+          "seconds": 86.26666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2590,
+          "seconds": 86.33333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2592,
+          "seconds": 86.4,
+          "units": 1
+        },
+        {
+          "tick": 2594,
+          "seconds": 86.46666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2595,
+          "seconds": 86.5,
+          "units": 1
+        },
+        {
+          "tick": 2598,
+          "seconds": 86.6,
+          "units": 1
+        },
+        {
+          "tick": 2600,
+          "seconds": 86.66666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2602,
+          "seconds": 86.73333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2604,
+          "seconds": 86.8,
+          "units": 1
+        },
+        {
+          "tick": 2606,
+          "seconds": 86.86666666666666,
+          "units": 1
+        },
+        {
+          "tick": 2609,
+          "seconds": 86.96666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2611,
+          "seconds": 87.03333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2613,
+          "seconds": 87.1,
+          "units": 1
+        },
+        {
+          "tick": 2615,
+          "seconds": 87.16666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2617,
+          "seconds": 87.23333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2619,
+          "seconds": 87.3,
+          "units": 1
+        },
+        {
+          "tick": 2622,
+          "seconds": 87.4,
+          "units": 1
+        },
+        {
+          "tick": 2624,
+          "seconds": 87.46666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2626,
+          "seconds": 87.53333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2628,
+          "seconds": 87.6,
+          "units": 1
+        },
+        {
+          "tick": 2630,
+          "seconds": 87.66666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2633,
+          "seconds": 87.76666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2635,
+          "seconds": 87.83333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2637,
+          "seconds": 87.9,
+          "units": 1
+        },
+        {
+          "tick": 2639,
+          "seconds": 87.96666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2641,
+          "seconds": 88.03333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2644,
+          "seconds": 88.13333333333334,
+          "units": 1
+        },
+        {
+          "tick": 2646,
+          "seconds": 88.2,
+          "units": 1
+        },
+        {
+          "tick": 2648,
+          "seconds": 88.26666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2650,
+          "seconds": 88.33333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2652,
+          "seconds": 88.4,
+          "units": 1
+        },
+        {
+          "tick": 2655,
+          "seconds": 88.5,
+          "units": 1
+        },
+        {
+          "tick": 2657,
+          "seconds": 88.56666666666666,
+          "units": 1
+        },
+        {
+          "tick": 2659,
+          "seconds": 88.63333333333334,
+          "units": 1
+        },
+        {
+          "tick": 2661,
+          "seconds": 88.7,
+          "units": 1
+        },
+        {
+          "tick": 2663,
+          "seconds": 88.76666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2665,
+          "seconds": 88.83333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2668,
+          "seconds": 88.93333333333334,
+          "units": 1
+        },
+        {
+          "tick": 2670,
+          "seconds": 89,
+          "units": 1
+        },
+        {
+          "tick": 2672,
+          "seconds": 89.06666666666666,
+          "units": 1
+        },
+        {
+          "tick": 2674,
+          "seconds": 89.13333333333334,
+          "units": 1
+        },
+        {
+          "tick": 2676,
+          "seconds": 89.2,
+          "units": 1
+        },
+        {
+          "tick": 2679,
+          "seconds": 89.3,
+          "units": 1
+        },
+        {
+          "tick": 2681,
+          "seconds": 89.36666666666666,
+          "units": 1
+        },
+        {
+          "tick": 2683,
+          "seconds": 89.43333333333334,
+          "units": 1
+        },
+        {
+          "tick": 2685,
+          "seconds": 89.5,
+          "units": 1
+        },
+        {
+          "tick": 2687,
+          "seconds": 89.56666666666666,
+          "units": 1
+        },
+        {
+          "tick": 2690,
+          "seconds": 89.66666666666667,
+          "units": 1
+        },
+        {
+          "tick": 2692,
+          "seconds": 89.73333333333333,
+          "units": 1
+        },
+        {
+          "tick": 2694,
+          "seconds": 89.8,
+          "units": 1
+        },
+        {
+          "tick": 2696,
+          "seconds": 89.86666666666666,
+          "units": 1
+        },
+        {
+          "tick": 2698,
+          "seconds": 89.93333333333334,
+          "units": 1
+        }
+      ],
+      "firstCapture": {
+        "tick": 472,
+        "seconds": 15.733333333333333,
+        "garrison": 1
+      },
+      "firstEmissionSeconds": 0.3333333333333333,
+      "lastEmissionSeconds": 90,
+      "firstArrivalSeconds": 2.3,
+      "initialQueueEmptySeconds": 12.5,
+      "atVideoCapture17": {
+        "tick": 510,
+        "seconds": 17,
+        "source": {
+          "owner": "blue",
+          "garrison": 162,
+          "reserved": 101,
+          "available": 61
+        },
+        "target": {
+          "owner": "blue",
+          "garrison": 38
+        },
+        "emittedUnits": 270,
+        "emittedPackets": 54,
+        "acceptedCommands": 2,
+        "inTransitUnits": 30,
+        "queuedUnits": 101,
+        "sourceProduced": 232,
+        "targetNeutralProduced": 94,
+        "totalGarrison": 1700,
+        "totalInTransit": 30,
+        "stats": {
+          "initialUnits": 1725,
+          "produced": 443,
+          "rewarded": 0,
+          "casualties": 438,
+          "captures": 1,
+          "commands": 2
+        },
+        "stateHash": "9c4a22f0"
+      },
+      "at20": {
+        "tick": 600,
+        "seconds": 20,
+        "source": {
+          "owner": "blue",
+          "garrison": 154,
+          "reserved": 51,
+          "available": 103
+        },
+        "target": {
+          "owner": "blue",
+          "garrison": 124
+        },
+        "emittedUnits": 320,
+        "emittedPackets": 64,
+        "acceptedCommands": 2,
+        "inTransitUnits": 35,
+        "queuedUnits": 51,
+        "sourceProduced": 274,
+        "targetNeutralProduced": 94,
+        "totalGarrison": 1778,
+        "totalInTransit": 35,
+        "stats": {
+          "initialUnits": 1725,
+          "produced": 526,
+          "rewarded": 0,
+          "casualties": 438,
+          "captures": 1,
+          "commands": 2
+        },
+        "stateHash": "99d6d961"
+      },
+      "capturedBy90Seconds": true,
+      "at90": {
+        "tick": 2700,
+        "seconds": 90,
+        "source": {
+          "owner": "blue",
+          "garrison": 1,
+          "reserved": 0,
+          "available": 1
+        },
+        "target": {
+          "owner": "blue",
+          "garrison": 1301
+        },
+        "emittedUnits": 1432,
+        "emittedPackets": 343,
+        "acceptedCommands": 84,
+        "inTransitUnits": 27,
+        "queuedUnits": 0,
+        "sourceProduced": 1233,
+        "targetNeutralProduced": 94,
+        "totalGarrison": 2802,
+        "totalInTransit": 27,
+        "stats": {
+          "initialUnits": 1725,
+          "produced": 1542,
+          "rewarded": 0,
+          "casualties": 438,
+          "captures": 1,
+          "commands": 84
+        },
+        "stateHash": "f4a42d70"
+      },
+      "conservation": {
+        "status": "PASS",
+        "checkedEveryTick": true,
+        "invariantChecks": 2785
+      }
+    }
+  ]
+}

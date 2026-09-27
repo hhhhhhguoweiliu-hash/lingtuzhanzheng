@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "sources": [
     {
       "sourceId": "L",
@@ -59,6 +59,21 @@
       "probeError": "moov atom not found",
       "uploaded": false,
       "note": "尺寸和时长来自之前成功读取，本轮未重新验证。缺失原件不阻塞L场景。"
+    },
+    {
+      "sourceId": "A-restored",
+      "filename": "1000042460_补发原始录屏_可正常解码.mp4",
+      "localFilename": "1000042460-restored.mp4",
+      "width": 432,
+      "height": 960,
+      "durationSeconds": 140.799667,
+      "decodedFrames": 4224,
+      "lastDecodedPtsSeconds": 140.766667,
+      "bytes": 10567625,
+      "sha256": "43e12f7976c1b5558abaa9a8c7a1c6e5e90251dc293ae8c41c5bc3ef981741f6",
+      "probeStatus": "visual_stream_decoded_to_end_with_opencv",
+      "driveUrl": "https://drive.google.com/file/d/1CO5Jh8278gh5O7rpctgqadNYhc0p15PE/view",
+      "note": "2026-09-27补发件，含首页/升级/竞技/结算；不是历史213.14s损坏件的字节恢复。未声称全量音轨解码。"
     }
   ],
   "timingPolicy": "Use decoded PTS. Do not derive timing from malformed r_frame_rate."

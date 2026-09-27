@@ -1,0 +1,4 @@
+# Derived reference imagery contains the user's original recording pixels.
+# Keep it local; the playable game only uses hand-reviewed vector geometry.
+*.png
+*.jpg

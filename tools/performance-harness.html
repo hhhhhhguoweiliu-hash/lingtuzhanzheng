@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>Synthetic renderer benchmark</title><canvas id="c" style="width:390px;height:743px"></canvas><script type="module">
+import {GameEngine} from '/src/sim/engine.ts';import {BoardRenderer} from '/src/render/board.ts';import {longMap,longWater} from '/src/maps/long.ts';
+let engine,board,phase=-1,last=0,times=[],start=performance.now(),acc=0,samples=[];const sizes=[200,1000,5000];
+window.bench={samples,done:false};
+function setup(i){const map=structuredClone(longMap);map.nodes.find(n=>n.owner==='blue').garrison=sizes[i];engine=new GameEngine(map,{aiEnabled:false,productionPerSecond:0,neutralProductionPerSecond:0,productionCap:null,emitUnitsPerSecond:10000,packetUnits:1,movementSpeed:1,routeMode:'any-visible'},731);engine.dispatch('blue','L_SW','L_NE3');engine.step(30);board=new BoardRenderer(document.querySelector('#c'),map);board.setWater(longWater);times=[];acc=0;}
+function frame(now){const elapsed=now-start;const i=Math.min(2,Math.floor(elapsed/100000));if(i!==phase){phase=i;setup(i);}const dt=last?now-last:0;last=now;if(dt>0&&dt<1000)times.push(dt);acc+=Math.min(dt,100);while(acc>=1000/30){engine.step();acc-=1000/30;}
+board.draw(engine.state,{selected:null,target:null,hovered:null,time:now,tutorial:false,skillReady:false,skillTargeting:false});
+if(elapsed>=(samples.length+1)*10000){const sorted=[...times].sort((a,b)=>a-b);samples.push({elapsedMs:elapsed,phase,size:sizes[phase],activePackets:engine.state.packets.length,visualUnits:engine.state.packets.reduce((s,p)=>s+p.units,0),frames:times.length,meanMs:times.reduce((a,b)=>a+b,0)/times.length,p95Ms:sorted[Math.floor(sorted.length*.95)],heap:performance.memory?.usedJSHeapSize??null});times=[];}
+if(elapsed>=300000){window.bench.done=true;return;}requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+</script>

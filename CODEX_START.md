@@ -1,5 +1,7 @@
 # 可直接交给 Codex 的开工指令
 
+> 以下为最初交接指令。2026-09-28已实现可玩游戏并收到A补发件，用户后续要求从首页和初始成长开始也已落实为候选流程。继续开发先读最新STATE、DIFFERENCES、VERIFICATION，保留已有实现和测试；不要按旧指令从空项目重建或重复下载。
+
 请读取仓库 hhhhhhguoweiliu-hash/lingtuzhanzheng 的 AGENTS.md、README.md、TASKBOOK.md、MECHANICS.md、ACCEPTANCE.md、QUEUE.md、STATE.md 和 references/SOURCES.md，然后实际下载查看录屏。
 
 我要求重做《解压来一局》录屏中的领土战争玩法。上一版只是通用据点游戏，被我否定。你必须先把长视频1000042572.mp4里的单场三方战斗做像：地图布局、据点位置、连续兵流、持续扣兵、密集队列、区域改色、顶部势力条和底部操作。不要先做商店或堆关卡。

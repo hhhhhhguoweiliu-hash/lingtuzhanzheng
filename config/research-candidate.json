@@ -1,26 +1,107 @@
 {
-  "schemaVersion": 1,
-  "id": "long-scene-research-v2",
-  "status": "candidate_not_calibrated",
+  "schemaVersion": 2,
+  "id": "long-scene-observation-candidate-2026-09-28",
+  "status": "observation_fitted_candidate_not_interaction_confirmed",
   "readyForProduction": false,
   "source": "1000042572.mp4",
-  "warning": "所有引擎值都是试验初值。地图未完成，不能声称可运行关卡或原版数值。",
+  "warning": "L场景可运行且地图已描摹；原版发兵持续语义、特殊效果、同输入时序未确认。权威运行配置为src/main.ts，此文件是研究快照。旧初值保留在Git历史。",
   "observations": {
     "neutralVisibleArmy": 125,
     "coloredVisibleArmy": 200,
     "repeatedVisiblePlateau": 250,
     "note": "只代表可见画面；蓝方第一秒已行动，真正起始兵数待复核"
   },
-  "simulation": {"ticksPerSecond": 30, "seed": 731, "replayVersion": 1},
-  "production": {"unitsPerSecond": 5, "neutralUnitsPerSecond": 0, "unknownIds": ["U06", "U07"]},
-  "capacity": {"productionSoftCap": 250, "incomingCanExceedCap": true, "hardCap": null, "unknownId": "U08"},
-  "dispatch": {"mode": "fixed_budget_stream", "fraction": 1, "deductAt": "emit", "packetUnits": 1, "emitUnitsPerSecond": 12, "reserveAtCommand": true, "unknownIds": ["U01", "U02", "U03"]},
-  "movement": {"unitsPerSecond": 110, "coordinateSpace": "video_design_720x1372", "routeMode": "research_route_graph", "encounterCombat": false, "unknownIds": ["U05", "U14"]},
-  "combat": {"attackToDefense": 1, "tieOwner": "defender", "arrivalOrder": ["arrivalTick", "subTick", "sequenceId"], "unknownIds": ["U04", "U16"]},
-  "ai": {"thinkSeconds": 1.8, "reserveMargin": 8, "targetJitter": 0.05, "playerFocusBias": 0, "note": "研究策略，不是原版AI"},
-  "special": {"effectsEnabled": false, "bonusUnitsCandidate": 100, "cooldownSeconds": null, "unknownIds": ["U09", "U10", "U11"]},
-  "hud": {"balanceMetric": "territory_count", "unknownId": "U12"},
-  "map": {"file": null, "nodeCount": null, "status": "requires_annotation"},
-  "render": {"columns": 5, "rowSpacing": 8, "columnSpacing": 7, "maxVisualInstances": 3000},
-  "milestone": "G0"
+  "simulation": {
+    "ticksPerSecond": 30,
+    "seed": 731,
+    "replayVersion": 1
+  },
+  "production": {
+    "unitsPerSecond": 11,
+    "unitsPerSecondByOwner": {
+      "blue": 13.7
+    },
+    "neutralUnitsPerSecond": 7,
+    "unknownIds": [
+      "U06",
+      "U07"
+    ]
+  },
+  "capacity": {
+    "productionSoftCap": 250,
+    "incomingCanExceedCap": true,
+    "hardCap": null,
+    "unknownId": "U08",
+    "neutralProductionSoftCap": 125
+  },
+  "dispatch": {
+    "mode": "fixed_budget_stream",
+    "fraction": 1,
+    "deductAt": "emit",
+    "packetUnits": 5,
+    "emitUnitsPerSecond": 16,
+    "reserveAtCommand": true,
+    "unknownIds": [
+      "U01",
+      "U02",
+      "U03"
+    ]
+  },
+  "movement": {
+    "unitsPerSecond": 80,
+    "coordinateSpace": "video_design_720x1372",
+    "routeMode": "any-visible",
+    "encounterCombat": false,
+    "unknownIds": [
+      "U05",
+      "U14"
+    ]
+  },
+  "combat": {
+    "attackToDefense": 1,
+    "tieOwner": "defender",
+    "arrivalOrder": [
+      "arrivalTick",
+      "subTick",
+      "sequenceId"
+    ],
+    "unknownIds": [
+      "U04",
+      "U16"
+    ]
+  },
+  "ai": {
+    "thinkSeconds": 1.8,
+    "reserveMargin": 12,
+    "targetJitter": 0.05,
+    "playerFocusBias": 0,
+    "note": "研究策略，不是原版AI"
+  },
+  "special": {
+    "effectsEnabled": false,
+    "bonusUnitsCandidate": 100,
+    "cooldownSeconds": null,
+    "unknownIds": [
+      "U09",
+      "U10",
+      "U11"
+    ]
+  },
+  "hud": {
+    "balanceMetric": "garrison_plus_in_transit_including_neutral",
+    "unknownId": "U12"
+  },
+  "map": {
+    "file": "src/maps/long.ts",
+    "nodeCount": 12,
+    "status": "traced_geometry_validated_visual_acceptance_pending"
+  },
+  "render": {
+    "columns": 5,
+    "columnSpacing": 14,
+    "radius": 7.6,
+    "maxVisiblePerPacket": 12,
+    "note": "场景通常5兵一包；几何渲染近似，不代表原版单位美术"
+  },
+  "milestone": "playable_G3_acceptance_partial"
 }

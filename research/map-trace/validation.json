@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "map": "long-map",
+      "nodeCount": 12,
+      "anchorsOutside": [],
+      "overlapPixels": 0,
+      "graphSymmetric": true,
+      "graphConnected": true
+    },
+    {
+      "map": "short-map",
+      "nodeCount": 26,
+      "anchorsOutside": [],
+      "overlapPixels": 0,
+      "graphSymmetric": true,
+      "graphConnected": true
+    },
+    {
+      "map": "arabia-map",
+      "nodeCount": 12,
+      "anchorsOutside": [],
+      "overlapPixels": 0,
+      "graphSymmetric": true,
+      "graphConnected": true
+    }
+  ],
+  "scope": "Static geometry and graph only; not a visual fidelity or original mechanism claim."
+}

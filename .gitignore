@@ -10,3 +10,26 @@ references/frames/
 *.part01
 *.part02
 *.assembling
+
+# Local verification outputs and private source-derived imagery
+*.log
+test-results/
+playwright-report/
+research/**/*.jpg
+research/**/*.png
+research/**/*.webm
+research/*.png
+research/*.jpg
+
+# One-off local implementation helpers, not runtime or reproducible verification
+tools/connect-progression.py
+tools/connect-scenes.py
+tools/extend-validation.py
+tools/final-ui.py
+tools/fix-replay.py
+tools/polish-ui.py
+tools/refine-capture.py
+tools/repair-integration.py
+tools/update-renderer.py
+tools/smoke-browser.mjs
+tools/smoke-home.mjs
