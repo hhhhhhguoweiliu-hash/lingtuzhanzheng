@@ -13,7 +13,7 @@ export class PointerInput {
   abort=new AbortController();
   constructor(public board:BoardRenderer,public cb:InputCallbacks){
     const canvas=board.canvas,opts={signal:this.abort.signal};
-    canvas.addEventListener('pointerdown',e=>{if(!cb.enabled())return;e.preventDefault();const p=board.point(e.clientX,e.clientY),hit=board.hit(p);
+    canvas.addEventListener('pointerdown',e=>{if(!cb.enabled()||this.down||e.button>0)return;e.preventDefault();const p=board.point(e.clientX,e.clientY),hit=board.hit(p);
       if(hit&&cb.skill(hit)){this.clear();return;}
       canvas.setPointerCapture(e.pointerId);const previous=this.selected;const source=hit&&cb.owned(hit)?hit:null;
       this.down={id:e.pointerId,clientX:e.clientX,clientY:e.clientY,source,previous};
@@ -30,9 +30,9 @@ export class PointerInput {
       else if(!dragged&&d.source){this.selected=d.source;cb.select(d.source,null,null);}
       else this.clear();
     },opts);
-    canvas.addEventListener('pointercancel',()=>this.clear(),opts);
-    canvas.addEventListener('lostpointercapture',()=>{if(this.down)this.clear();},opts);
+    canvas.addEventListener('pointercancel',e=>{if(this.down?.id===e.pointerId)this.clear();},opts);
+    canvas.addEventListener('lostpointercapture',e=>{if(this.down?.id===e.pointerId)this.clear();},opts);
   }
-  clear(){this.selected=null;this.down=null;this.cb.select(null,null,null);}
+  clear(){const id=this.down?.id;this.selected=null;this.down=null;if(id!==undefined&&this.board.canvas.hasPointerCapture(id))this.board.canvas.releasePointerCapture(id);this.cb.select(null,null,null);}
   destroy(){this.abort.abort();this.clear();}
 }

@@ -21,13 +21,20 @@ export class BoardRenderer {
   polygons=new Map<string,Path2D[]>();
   waterPaths:Path2D[]=[];
   backgroundPaths:Path2D[]=[];
+  private terrain:HTMLCanvasElement;
+  private terrainContext:CanvasRenderingContext2D;
+  private terrainDirty=true;
+  private terrainDashOffset=0;
+  private terrainNodes:{id:string;owner:OwnerId;kind:NodeState['kind'];x:number;y:number;radius:number|undefined}[]=[];
   constructor(public canvas:HTMLCanvasElement,public map:GameMap) {
     this.ctx=canvas.getContext('2d',{alpha:false})!;
+    this.terrain=canvas.ownerDocument.createElement('canvas');
+    this.terrainContext=this.terrain.getContext('2d',{alpha:false})!;
     for(const n of map.nodes)this.polygons.set(n.id,(n.polygons??[]).map(path));
   }
-  setWater(polys:Point[][]) { this.waterPaths=polys.map(path); }
-  setBackground(polys:Point[][]) { this.backgroundPaths=polys.map(path); }
-  setPalette(overrides:Partial<Record<OwnerId,Partial<typeof palette.blue>>>) {for(const [id,v]of Object.entries(overrides))Object.assign(this.colors[id as OwnerId],v);}
+  setWater(polys:Point[][]) { this.waterPaths=polys.map(path);this.terrainDirty=true; }
+  setBackground(polys:Point[][]) { this.backgroundPaths=polys.map(path);this.terrainDirty=true; }
+  setPalette(overrides:Partial<Record<OwnerId,Partial<typeof palette.blue>>>) {for(const [id,v]of Object.entries(overrides))Object.assign(this.colors[id as OwnerId],v);this.terrainDirty=true;}
   resize() {
     const dpr=Math.min(window.devicePixelRatio||1,2);
     const w=Math.round(this.canvas.clientWidth*dpr),h=Math.round(this.canvas.clientHeight*dpr);
@@ -43,25 +50,26 @@ export class BoardRenderer {
   }
   draw(state:GameState,o:VisualOptions) {
     this.resize();const c=this.ctx; const sx=this.canvas.width/this.map.width,sy=this.canvas.height/this.map.height;
-    c.setTransform(sx,0,0,sy,0,0);c.fillStyle='#d1d1d1';c.fillRect(0,0,this.map.width,this.map.height);
-    c.fillStyle='#b4d6e0';for(const p of this.waterPaths)c.fill(p);
-    c.fillStyle='#969796';for(const p of this.backgroundPaths)c.fill(p);
+    this.drawTerrain(state,sx,sy);
+    // Copy at backing-store size, avoiding a second resampling at fractional DPR.
+    c.setTransform(1,0,0,1,0,0);c.drawImage(this.terrain,0,0);
+    c.setTransform(sx,0,0,sy,0,0);
     c.lineJoin='round';c.lineCap='round';
-    for(const n of state.nodes){c.fillStyle=this.colors[n.owner].land;c.strokeStyle='#d5d5d2';c.lineWidth=3;for(const p of this.polygons.get(n.id)??[]){c.fill(p);c.stroke(p);}}
-    // Coverage is visual only until the source's special-node effect is established.
-    for(const n of state.nodes)if(n.kind==='special_unknown')this.coverage(n);
     if(o.selected){const n=state.nodes.find(n=>n.id===o.selected);if(n){c.fillStyle='#ffffff36';c.strokeStyle='#fff';c.lineWidth=4;for(const p of this.polygons.get(n.id)??[]){c.fill(p);c.stroke(p);}
       if(o.target){c.beginPath();c.moveTo(n.anchor.x,n.anchor.y);c.lineTo(o.target.x,o.target.y);c.strokeStyle='#ffffffd9';c.lineWidth=7;c.setLineDash([10,9]);c.lineDashOffset=-o.time/60;c.stroke();c.setLineDash([]);c.beginPath();c.arc(o.target.x,o.target.y,21,0,Math.PI*2);c.stroke();}
     }}
     // Each emitted packet advances on its own path. Multiple columns represent a stream,
     // with a taper near the endpoints so no dot teleports sideways at departure/arrival.
+    let packetOwner:OwnerId|undefined;c.lineWidth=3;
     for(const p of state.packets){
+      if(packetOwner!==p.owner){packetOwner=p.owner;c.fillStyle=this.colors[p.owner].unit;c.strokeStyle=this.colors[p.owner].unit;}
       const a=p.path[0],b=p.path[p.path.length-1];const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1;
       const taper=Math.min(1,p.progress*8,(1-p.progress)*8);
+      const angle=p.owner==='brown'||p.owner==='magenta'?Math.atan2(dy,dx):0;
       for(let u=0;u<Math.min(p.units,12);u++){
         const lane=(p.units>1?u-(Math.min(p.units,12)-1)/2:(p.sequenceId%5)-2)*14;
         const x=p.x-dy/l*lane*taper,y=p.y+dx/l*lane*taper;
-        this.unit(p.owner,x,y,7.6,Math.atan2(dy,dx));
+        this.unit(p.owner,x,y,7.6,angle,false);
       }
     }
     // A periodic ray is observed; damage is still unconfirmed. No hidden loss.
@@ -76,15 +84,34 @@ export class BoardRenderer {
     else if(o.tutorial){c.fillStyle='#ffffffeb';c.beginPath();c.roundRect(138,963,444,64,32);c.fill();c.fillStyle='#52565b';c.font='26px Arial, sans-serif';c.textAlign='center';c.fillText('拖动蓝色据点，向目标派兵',360,1005);}
     c.setTransform(1,0,0,1,0,0);
   }
-  private coverage(n:NodeState) {
-    const c=this.ctx,x=n.anchor.x,y=n.anchor.y,r=n.coverageRadius??115;
+  private drawTerrain(state:GameState,sx:number,sy:number) {
+    const resized=this.terrain.width!==this.canvas.width||this.terrain.height!==this.canvas.height;
+    if(!resized&&!this.terrainDirty&&this.terrainDashOffset===this.ctx.lineDashOffset&&this.terrainNodes.length===state.nodes.length&&state.nodes.every((n,i)=>{
+      const last=this.terrainNodes[i];return last.id===n.id&&last.owner===n.owner&&last.kind===n.kind&&last.x===n.anchor.x&&last.y===n.anchor.y&&last.radius===n.coverageRadius;
+    }))return;
+    if(resized){this.terrain.width=this.canvas.width;this.terrain.height=this.canvas.height;}
+    const c=this.terrainContext;c.setTransform(sx,0,0,sy,0,0);c.lineDashOffset=this.ctx.lineDashOffset;
+    c.fillStyle='#d1d1d1';c.fillRect(0,0,this.map.width,this.map.height);
+    c.fillStyle='#b4d6e0';for(const p of this.waterPaths)c.fill(p);
+    c.fillStyle='#969796';for(const p of this.backgroundPaths)c.fill(p);
+    c.lineJoin='round';c.lineCap='round';
+    for(const n of state.nodes){c.fillStyle=this.colors[n.owner].land;c.strokeStyle='#d5d5d2';c.lineWidth=3;for(const p of this.polygons.get(n.id)??[]){c.fill(p);c.stroke(p);}}
+    // Only ownership and visual geometry affect this layer; counts/ticks never
+    // invalidate it or change the simulation. Dynamic rays remain in draw().
+    for(const n of state.nodes)if(n.kind==='special_unknown')this.coverage(n,c);
+    this.terrainNodes=state.nodes.map(n=>({id:n.id,owner:n.owner,kind:n.kind,x:n.anchor.x,y:n.anchor.y,radius:n.coverageRadius}));
+    this.terrainDashOffset=this.ctx.lineDashOffset;
+    this.terrainDirty=false;
+  }
+  private coverage(n:NodeState,c:CanvasRenderingContext2D) {
+    const x=n.anchor.x,y=n.anchor.y,r=n.coverageRadius??115;
     c.save();c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle='#ffffff50';c.fill();c.clip();
     c.fillStyle=n.owner==='neutral'?'#8d737978':this.colors[n.owner].unit+'70';
     for(let py=y-r;py<y+r;py+=17)for(let px=x-r;px<x+r;px+=16){c.beginPath();c.moveTo(px,py);c.lineTo(px+2,py);c.lineTo(px+2,py+6);c.lineTo(px+5,py+6);c.lineTo(px+1,py+11);c.lineTo(px-3,py+6);c.lineTo(px,py+6);c.closePath();c.fill();}
     c.restore();c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.strokeStyle=n.owner==='neutral'?'#858080':this.colors[n.owner].unit;c.lineWidth=4;c.setLineDash([8,8]);c.stroke();c.setLineDash([]);
   }
-  private unit(owner:OwnerId,x:number,y:number,r:number,angle=0) {
-    const c=this.ctx;c.fillStyle=this.colors[owner].unit;c.strokeStyle=this.colors[owner].unit;c.lineWidth=3;
+  private unit(owner:OwnerId,x:number,y:number,r:number,angle=0,setStyle=true) {
+    const c=this.ctx;if(setStyle){c.fillStyle=this.colors[owner].unit;c.strokeStyle=this.colors[owner].unit;c.lineWidth=3;}
     if(owner==='brown'){c.beginPath();c.ellipse(x,y,r*.64,r,angle,0,Math.PI*2);c.stroke();}
     else if(owner==='magenta'){c.save();c.translate(x,y);c.rotate(angle);c.beginPath();c.moveTo(-r,-r*.65);c.lineTo(r,0);c.lineTo(-r,r*.65);c.lineTo(-r*.3,0);c.closePath();c.fill();c.restore();}
     else if(owner==='green'){c.beginPath();c.moveTo(x,y-r);c.lineTo(x+r,y);c.lineTo(x,y+r);c.lineTo(x-r,y);c.closePath();c.fill();}

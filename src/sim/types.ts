@@ -1,5 +1,6 @@
 /** All numerical defaults are research candidates, not recovered original rules. */
 export type OwnerId = 'neutral' | 'blue' | 'brown' | 'magenta' | 'green' | 'red';
+export type DispatchMode = 'budget' | 'continuous';
 export interface Point { x: number; y: number }
 export interface NodeDefinition {
   id: string;
@@ -56,6 +57,8 @@ export interface DispatchQueue {
   sourceId: string;
   targetId: string;
   remainingBudget: number;
+  /** Absent means the original fixed-budget queue. Continuous queues reserve zero. */
+  mode?: DispatchMode;
   path: Point[];
 }
 export interface UnitPacket {
@@ -76,7 +79,7 @@ export interface UnitPacket {
   x: number;
   y: number;
 }
-export type LedgerKind = 'production' | 'reserve' | 'emit' | 'arrival' | 'combat_loss' | 'capture' | 'cancel' | 'reward' | 'eliminated' | 'winner' | 'ai';
+export type LedgerKind = 'production' | 'reserve' | 'route' | 'emit' | 'arrival' | 'combat_loss' | 'capture' | 'cancel' | 'reward' | 'eliminated' | 'winner' | 'ai';
 export interface LedgerEvent {
   tick: number;
   kind: LedgerKind;
@@ -107,12 +110,12 @@ export interface GameState {
 }
 export interface CommandResult { accepted: boolean; reason: string; units: number; commandId?: number }
 export type ReplayCommand =
-  | { kind: 'dispatch'; tick: number; owner: OwnerId; sourceId: string; targetId: string; fraction: number }
+  | { kind: 'dispatch'; tick: number; owner: OwnerId; sourceId: string; targetId: string; fraction: number; mode?: DispatchMode }
   | { kind: 'cancel'; tick: number; sourceId: string }
   | { kind: 'reward'; tick: number; id: string; owner: OwnerId; targetId: string; units: number }
   | { kind: 'player-ai'; tick: number; enabled: boolean };
 export interface Replay {
-  version: 1;
+  version: 1 | 2;
   configHash: string;
   mapHash: string;
   seed: number;

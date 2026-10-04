@@ -1,0 +1,562 @@
+{
+  "date": "2026-10-05",
+  "timezone": "Asia/Shanghai",
+  "unit": {
+    "passed": 53,
+    "failed": 0,
+    "startTimeUnixMs": 1791140556951,
+    "files": [
+      {
+        "file": "progression.test.ts",
+        "status": "passed",
+        "tests": [
+          {
+            "title": "observed upgrade anchors and local profile keeps the actual observed unit and production values while starting a new player at level 1",
+            "status": "passed"
+          },
+          {
+            "title": "observed upgrade anchors and local profile validates corrupt data without giving negative balances, impossible levels or prototype records",
+            "status": "passed"
+          },
+          {
+            "title": "observed upgrade anchors and local profile charges exactly the displayed price and refuses unaffordable upgrades atomically",
+            "status": "passed"
+          },
+          {
+            "title": "energy and match transactions spends campaign energy once, preserves refill remainder, and cannot mint energy by rolling the clock backwards",
+            "status": "passed"
+          },
+          {
+            "title": "energy and match transactions refuses to start without energy and does not create a match record",
+            "status": "passed"
+          },
+          {
+            "title": "energy and match transactions settles one win once even after a save reload, and rejects changed match identity",
+            "status": "passed"
+          },
+          {
+            "title": "energy and match transactions does not advance two stages for concurrently started matches from the same stage",
+            "status": "passed"
+          },
+          {
+            "title": "energy and match transactions reference replay remains free of progression rewards and PVP awards the observed five stars",
+            "status": "passed"
+          },
+          {
+            "title": "local optional progression only completed tasks can be claimed and every task pays once",
+            "status": "passed"
+          },
+          {
+            "title": "local optional progression a daily spin grants once, rejects invalid RNG and only equips unlocked skins",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "file": "save.test.ts",
+        "status": "passed",
+        "tests": [
+          {
+            "title": "keeps legacy progression and defaults missing/invalid control preferences to single dispatch",
+            "status": "passed"
+          },
+          {
+            "title": "rejects a stale page without overwriting a newer balance or preferences",
+            "status": "passed"
+          },
+          {
+            "title": "reports unavailable storage separately and can recover once storage is writable",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "file": "sim.test.ts",
+        "status": "passed",
+        "tests": [
+          {
+            "title": "fixed-budget stream, reservations and conservation five-unit batches wait for enough emission credit and a final partial batch is conserved",
+            "status": "passed"
+          },
+          {
+            "title": "fixed-budget stream, reservations and conservation B03/B04: emits exactly 30 in 3 seconds and cancellation never refunds reserved garrison",
+            "status": "passed"
+          },
+          {
+            "title": "fixed-budget stream, reservations and conservation B05: several commands share actual available troops and one source emission rate",
+            "status": "passed"
+          },
+          {
+            "title": "fixed-budget stream, reservations and conservation validates owners, target, routes, fractions and zero-budget commands without changing state",
+            "status": "passed"
+          },
+          {
+            "title": "fixed-budget stream, reservations and conservation B06/C10: captured source cancels unissued budget while old packets remain a living faction",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch uses real current troops and later reinforcements without reserving future units",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch starts at zero garrison and sends newly produced small packets without waiting for five soldiers",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch does not bank whole emission credits while empty or burst after a long wait",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch discards unused whole credits immediately after a small garrison drains",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch repeating the same target is idempotent and does not reset or multiply throughput",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch replaces all source budgets or the old continuous target without refunding or redirecting packets",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch a new valid budget command replaces a continuous route while invalid commands leave it intact",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch records cancellation of a zero-budget continuous route at terminal tick zero",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch cancels a depleted route without refund and does not resume after later production",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch source capture cancels its route and keeps already emitted packets in their original faction",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch budget-defender casualty cleanup preserves an unrelated empty continuous route",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch continuous commands replay at their final tick and fixed-budget-only exports retain version 1",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch simulation is frozen without step and after battle completion, including continuous routes",
+            "status": "passed"
+          },
+          {
+            "title": "optional continuous dispatch manual continuous routes do not switch the AI to continuous dispatch",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat B07: travel time scales with distance after separately specified emission delay",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat B08: defenders decrease before the stream tail arrives",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat C01–C03: 8 attack versus 3 defenders",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat C01–C03: 3 attack versus 8 defenders",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat C01–C03: 5 attack versus 5 defenders",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat B09: later packets reinforce their target after an earlier packet captures it",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat C04: simultaneous arrivals resolve by documented packet order, without owner preference",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat B10: a bent path follows arc length and graph routing does not cross hostile intermediate nodes",
+            "status": "passed"
+          },
+          {
+            "title": "movement and arrival combat subtick arrivals precede an exact integer arrival within the same tick",
+            "status": "passed"
+          },
+          {
+            "title": "production, soft capacity and reward adapters neutral defenders regenerate to125 after an attack and use the colored250 cap after capture",
+            "status": "passed"
+          },
+          {
+            "title": "production, soft capacity and reward adapters C05/C06: reinforcement exceeds soft cap and survives; emission below cap restores production",
+            "status": "passed"
+          },
+          {
+            "title": "production, soft capacity and reward adapters C07: fixed-point 1.47/s production gives exactly 147 units over 100 seconds",
+            "status": "passed"
+          },
+          {
+            "title": "production, soft capacity and reward adapters production overrides follow the owner after capture and special visuals have no hidden effects",
+            "status": "passed"
+          },
+          {
+            "title": "production, soft capacity and reward adapters C09: duplicate reward callback is idempotent; invalid target does not consume grant ID",
+            "status": "passed"
+          },
+          {
+            "title": "determinism, replay and complete AI matches C12: commands, cancellations, rewards and AI toggle round-trip to exact state",
+            "status": "passed"
+          },
+          {
+            "title": "determinism, replay and complete AI matches same fixed ticks in 30/60/120 render-frame schedules result in identical snapshots",
+            "status": "passed"
+          },
+          {
+            "title": "determinism, replay and complete AI matches snapshots and caller map data are isolated; map/config hashes are key-order independent",
+            "status": "passed"
+          },
+          {
+            "title": "determinism, replay and complete AI matches D01/D02: AI seed 7 expands, respects conservation and reaches a winner",
+            "status": "passed"
+          },
+          {
+            "title": "determinism, replay and complete AI matches D01/D02: AI seed 31 expands, respects conservation and reaches a winner",
+            "status": "passed"
+          },
+          {
+            "title": "determinism, replay and complete AI matches D01/D02: AI seed 731 expands, respects conservation and reaches a winner",
+            "status": "passed"
+          },
+          {
+            "title": "determinism, replay and complete AI matches D01/D02: AI seed 2026 expands, respects conservation and reaches a winner",
+            "status": "passed"
+          }
+        ]
+      }
+    ]
+  },
+  "browserBatches": [
+    {
+      "stats": {
+        "startTime": "2026-10-04T18:36:59.572Z",
+        "duration": 90026.36,
+        "expected": 18,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "file": "browser.spec.ts",
+          "title": "page loads without framework errors and a real drag dispatches one budget",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "enemy drag, release on blank space and pointercancel never issue commands",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "tap-select source then tap neutral target sends exactly one command",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "pause freezes tick and resume does not catch up paused wall time",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "window blur clears a pending gesture and pauses without a ghost order",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "ten retries retain one input handler and one simulation clock",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "battle fits 320x568 with all node anchors in canvas",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "battle fits 390x844 with all node anchors in canvas",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "battle fits 768x1024 with all node anchors in canvas",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "battle fits 1365x768 with all node anchors in canvas",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "battle fits 844x390 with all node anchors in canvas",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "tap-friendly reinforcement works after capturing a second blue territory",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "built standalone file plays offline without attempting any network requests",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "browser.spec.ts",
+          "title": "mobile touch taps issue one command at device pixel ratio2",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "ui-progression.spec.ts",
+          "title": "new local player wins campaign by visible pointer actions, buys an upgrade and retains progress on reload",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "ui-progression.spec.ts",
+          "title": "replay import executes commands at terminal tick0 and exposes mobile pause control",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "ui-progression.spec.ts",
+          "title": "replay import executes commands at terminal tick7 and exposes mobile pause control",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "ui-progression.spec.ts",
+          "title": "exported campaign replay imports its modified map without spending another energy entry",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        }
+      ]
+    },
+    {
+      "stats": {
+        "startTime": "2026-10-04T19:05:49.439Z",
+        "duration": 60159.204,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "legacy save keeps progress and defaults to single dispatch; mode and fraction persist independently",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "continuous route exceeds the initial budget, duplicate orders do not multiply emission, and redirect/stop preserve travelling troops",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "pause stops all routes and exported v2 replay imports exactly while refusing live commands",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "another home tab refreshes the visible upgrade and wallet without overwriting new progress",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "another tab update suspends an open panel until the player reloads the latest saved progress",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "opening a second home tab does not write the save or interrupt a full-energy practice battle with a conflict",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "a delayed replay import cannot override a newer save conflict from another tab",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "a delayed replay import cannot start after the player has left settings",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "continuous-ui.spec.ts",
+          "title": "mode, route and stop controls remain reachable on the smallest supported portrait viewport",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "input-safety.spec.ts",
+          "title": "right mouse button cannot select or dispatch, and a subsequent left drag still works",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "input-safety.spec.ts",
+          "title": "secondary finger does not steal the primary drag or cancel it when lifted first",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        },
+        {
+          "file": "input-safety.spec.ts",
+          "title": "browser touch cancellation releases the gesture and the next real touch can dispatch",
+          "ok": true,
+          "statuses": [
+            "passed"
+          ]
+        }
+      ]
+    }
+  ],
+  "build": "PASS: TypeScript, Vite and standalone HTML",
+  "renderer": {
+    "visualChecks": 42,
+    "exactPixelMatches": true,
+    "errors": [],
+    "summary": [
+      {
+        "dpr": 1,
+        "packets": 200,
+        "beforeMs": 1.9229166667597988,
+        "afterMs": 1.403124999565383,
+        "reductionPercent": 27.031419311076455
+      },
+      {
+        "dpr": 1,
+        "packets": 1000,
+        "beforeMs": 3.9979166669460637,
+        "afterMs": 3.024999999596427,
+        "reductionPercent": 24.33559146926466
+      },
+      {
+        "dpr": 1,
+        "packets": 5000,
+        "beforeMs": 8.95833333209157,
+        "afterMs": 5.847916666883975,
+        "reductionPercent": 34.72093022108368
+      },
+      {
+        "dpr": 2,
+        "packets": 200,
+        "beforeMs": 1.035416666418314,
+        "afterMs": 0.6843750004967053,
+        "reductionPercent": 33.903420459313516
+      },
+      {
+        "dpr": 2,
+        "packets": 1000,
+        "beforeMs": 1.9885416656422117,
+        "afterMs": 1.4062500010865429,
+        "reductionPercent": 29.282346687345584
+      },
+      {
+        "dpr": 2,
+        "packets": 5000,
+        "beforeMs": 7.35833333308498,
+        "afterMs": 5.323958333426466,
+        "reductionPercent": 27.647225364355744
+      }
+    ]
+  },
+  "limits": [
+    "Continuous dispatch is an optional user-selected candidate, not a proven original rule.",
+    "Browser multitouch uses desktop Edge CDP; Android hardware acceptance remains pending.",
+    "CPU drawing microbenchmark does not establish overall FPS or original-video fidelity."
+  ]
+}

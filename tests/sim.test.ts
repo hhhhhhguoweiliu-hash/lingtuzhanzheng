@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { GameEngine, pointOnPath, stableHash } from '../src/sim/engine';
-import type { GameMap, NodeDefinition, SimConfig } from '../src/sim/types';
+import type { DispatchMode, GameMap, NodeDefinition, SimConfig } from '../src/sim/types';
 import { longMap } from '../src/maps/long';
 
 const quiet: Partial<SimConfig> = { aiEnabled: false, productionPerSecond: 0, neutralProductionPerSecond: 0 };
@@ -75,6 +75,205 @@ describe('fixed-budget stream, reservations and conservation', () => {
     expect(engine.state.eliminated).not.toContain('blue');
     expect(engine.state.winner).toBeNull();
     expect(engine.state.ledger.some(e => e.kind === 'cancel' && e.reason === 'source_captured')).toBe(true);
+  });
+});
+
+describe('optional continuous dispatch', () => {
+  it('uses real current troops and later reinforcements without reserving future units', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 10, 0), node('b', 'neutral', 1000, 10000)), { ...quiet, packetUnits: 5, emitUnitsPerSecond: 16 });
+    expect(engine.dispatch('blue', 'a', 'b', 1, 'continuous')).toMatchObject({ accepted: true, units: 0 });
+    expect(engine.getNode('a')).toMatchObject({ garrison: 10, reserved: 0 });
+    checkedSteps(engine, 60);
+    expect(engine.getNode('a')!.garrison).toBe(0);
+    expect(engine.state.queues).toHaveLength(1);
+    expect(engine.state.queues[0]).toMatchObject({ mode: 'continuous', remainingBudget: 0 });
+    expect(engine.grantReward('real-test-reinforcements', 'blue', 'a', 20)).toBe(true);
+    checkedSteps(engine, 60);
+    expect(engine.state.packets.reduce((n, p) => n + p.units, 0)).toBe(30);
+    expect(engine.getNode('a')).toMatchObject({ garrison: 0, reserved: 0 });
+  });
+
+  it('starts at zero garrison and sends newly produced small packets without waiting for five soldiers', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 0, 0), node('b', 'neutral', 1000, 10000)), { ...quiet, productionPerSecond: 2, packetUnits: 5, emitUnitsPerSecond: 16 });
+    expect(engine.dispatch('blue', 'a', 'b', 1, 'continuous').accepted).toBe(true);
+    checkedSteps(engine, 151);
+    expect(engine.state.stats.produced).toBe(10);
+    expect(engine.state.packets.map(p => p.units)).toEqual(Array(10).fill(1));
+    expect(engine.getNode('a')!.garrison).toBe(0);
+    expect(engine.state.queues).toHaveLength(1);
+  });
+
+  it('does not bank whole emission credits while empty or burst after a long wait', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 0, 0), node('b', 'neutral', 1000, 10000)), { ...quiet, packetUnits: 5, emitUnitsPerSecond: 16 });
+    engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    checkedSteps(engine, 900);
+    expect(engine.getNode('a')!.emitRemainder).toBe(0);
+    engine.grantReward('after-wait', 'blue', 'a', 100);
+    checkedSteps(engine, 9);
+    expect(engine.state.packets).toHaveLength(0);
+    engine.step();
+    expect(engine.state.packets.map(p => p.units)).toEqual([5]);
+    checkedSteps(engine, 20);
+    expect(engine.state.packets.reduce((n, p) => n + p.units, 0)).toBe(15);
+  });
+
+  it('discards unused whole credits immediately after a small garrison drains', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 1, 0), node('b', 'neutral', 1000, 10000)), { ...quiet, packetUnits: 5, emitUnitsPerSecond: 300 });
+    engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    engine.step();
+    expect(engine.state.packets.map(p => p.units)).toEqual([1]);
+    expect(engine.getNode('a')!.emitRemainder).toBe(0);
+    // Reinforcements arrive before another empty tick can clear stale credit.
+    engine.grantReward('next-tick-reinforcements', 'blue', 'a', 100);
+    engine.step();
+    engine.assertInvariants();
+    expect(engine.state.packets.map(p => p.units)).toEqual([1, 5, 5]);
+    expect(engine.getNode('a')!.garrison).toBe(90);
+    expect(GameEngine.fromReplay(engine.map, engine.exportReplay()).snapshot()).toEqual(engine.snapshot());
+  });
+
+  it('repeating the same target is idempotent and does not reset or multiply throughput', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 100, 0), node('b', 'neutral', 1000, 10000)), { ...quiet, packetUnits: 5, emitUnitsPerSecond: 16 });
+    const first = engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    engine.step(5);
+    const before = engine.snapshot();
+    for (let i = 0; i < 20; i++) expect(engine.dispatch('blue', 'a', 'b', 1, 'continuous')).toMatchObject({ accepted: true, reason: 'already_continuous', commandId: first.commandId });
+    expect(engine.snapshot()).toEqual(before);
+    expect(engine.exportReplay().commands).toHaveLength(1);
+    checkedSteps(engine, 85);
+    expect(engine.state.packets.reduce((n, p) => n + p.units, 0)).toBe(45);
+  });
+
+  it('replaces all source budgets or the old continuous target without refunding or redirecting packets', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 100, 0), node('b', 'neutral', 1000, 10000), node('c', 'neutral', 1000, 15000)), { ...quiet, packetUnits: 5, emitUnitsPerSecond: 16 });
+    engine.dispatch('blue', 'a', 'b', 0.8);
+    engine.dispatch('blue', 'a', 'c');
+    expect(engine.getNode('a')!.reserved).toBe(100);
+    engine.dispatch('blue', 'a', 'c', 1, 'continuous');
+    expect(engine.getNode('a')).toMatchObject({ garrison: 100, reserved: 0 });
+    expect(engine.state.queues).toHaveLength(1);
+    engine.step(10);
+    expect(engine.getNode('a')!.garrison).toBe(95);
+    engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    checkedSteps(engine, 10);
+    expect(engine.state.packets.map(p => [p.targetId, p.units])).toEqual([['c', 5], ['b', 5]]);
+    expect(engine.state.queues).toHaveLength(1);
+    expect(engine.state.queues[0].targetId).toBe('b');
+    expect(engine.getNode('a')).toMatchObject({ garrison: 90, reserved: 0 });
+  });
+
+  it('a new valid budget command replaces a continuous route while invalid commands leave it intact', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 10, 0), node('b', 'neutral', 1000, 10000)), quiet);
+    engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    const before = engine.snapshot();
+    expect(engine.dispatch('blue', 'a', 'missing', 1, 'continuous').accepted).toBe(false);
+    expect(engine.dispatch('blue', 'a', 'b', 1, 'unknown' as DispatchMode).reason).toBe('invalid_dispatch_mode');
+    expect(engine.dispatch('brown', 'a', 'b', 1, 'continuous').accepted).toBe(false);
+    expect(engine.snapshot()).toEqual(before);
+    expect(engine.dispatch('blue', 'a', 'b', 0.5).units).toBe(5);
+    expect(engine.state.queues).toHaveLength(1);
+    expect(engine.state.queues[0].mode).toBeUndefined();
+    expect(engine.getNode('a')).toMatchObject({ garrison: 10, reserved: 5 });
+    checkedSteps(engine, 30);
+    expect(engine.state.queues).toHaveLength(0);
+    expect(engine.getNode('a')!.garrison).toBe(5);
+  });
+
+  it('records cancellation of a zero-budget continuous route at terminal tick zero', () => {
+    const fixture = map(node('a', 'blue', 0, 0), node('b', 'neutral', 1000, 10000));
+    const engine = new GameEngine(fixture, quiet);
+    engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    expect(engine.cancel('a')).toBe(0);
+    expect(engine.state.queues).toHaveLength(0);
+    const replay = engine.exportReplay();
+    expect(replay).toMatchObject({ version: 2, endTick: 0 });
+    expect(replay.commands.map(c => c.kind)).toEqual(['dispatch', 'cancel']);
+    expect(GameEngine.fromReplay(fixture, replay).snapshot()).toEqual(engine.snapshot());
+    expect(GameEngine.fromReplay(fixture, replay).exportReplay()).toEqual(replay);
+    engine.cancel('a');
+    expect(engine.exportReplay()).toEqual(replay);
+  });
+
+  it('cancels a depleted route without refund and does not resume after later production', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 1, 0), node('b', 'neutral', 1000, 10000)), { ...quiet, productionPerSecond: 1, emitUnitsPerSecond: 30, packetUnits: 5 });
+    engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    engine.step();
+    expect(engine.getNode('a')!.garrison).toBe(0);
+    expect(engine.cancel('a')).toBe(0);
+    checkedSteps(engine, 60);
+    expect(engine.getNode('a')!.garrison).toBe(2);
+    expect(engine.state.packets.map(p => p.units)).toEqual([1]);
+    expect(engine.state.queues).toHaveLength(0);
+    expect(GameEngine.fromReplay(engine.map, engine.exportReplay()).snapshot()).toEqual(engine.snapshot());
+  });
+
+  it('source capture cancels its route and keeps already emitted packets in their original faction', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 41, 0), node('b', 'brown', 100, 1), node('c', 'neutral', 0, 10000)), { ...quiet, emitUnitsPerSecond: 300, packetUnits: 10, movementSpeed: 30 });
+    engine.dispatch('blue', 'a', 'c', 1, 'continuous');
+    engine.dispatch('brown', 'b', 'a');
+    checkedSteps(engine, 3);
+    expect(engine.getNode('a')!.owner).toBe('brown');
+    expect(engine.state.queues.some(q => q.sourceId === 'a')).toBe(false);
+    expect(engine.state.packets.some(p => p.sourceId === 'a' && p.owner === 'blue')).toBe(true);
+    expect(engine.state.eliminated).not.toContain('blue');
+    expect(engine.state.winner).toBeNull();
+    expect(GameEngine.fromReplay(engine.map, engine.exportReplay()).snapshot()).toEqual(engine.snapshot());
+  });
+
+  it('budget-defender casualty cleanup preserves an unrelated empty continuous route', () => {
+    const engine = new GameEngine(map(node('a', 'blue', 0, 10000), node('b', 'blue', 100, 0), node('c', 'brown', 10, 1), node('d', 'neutral', 0, 15000)), { ...quiet, packetUnits: 10, emitUnitsPerSecond: 300, movementSpeed: 30 });
+    engine.dispatch('blue', 'a', 'd', 1, 'continuous');
+    engine.dispatch('blue', 'b', 'd');
+    engine.dispatch('brown', 'c', 'b');
+    checkedSteps(engine, 2);
+    expect(engine.getNode('b')).toMatchObject({ garrison: 70, reserved: 70 });
+    expect(engine.state.queues.some(q => q.sourceId === 'a' && q.mode === 'continuous')).toBe(true);
+  });
+
+  it('continuous commands replay at their final tick and fixed-budget-only exports retain version 1', () => {
+    const fixture = map(node('a', 'blue', 100, 0), node('b', 'neutral', 1000, 10000), node('c', 'neutral', 1000, 15000));
+    const engine = new GameEngine(fixture, { ...quiet, productionPerSecond: 2, packetUnits: 5, emitUnitsPerSecond: 16 });
+    engine.dispatch('blue', 'a', 'b', 0.2);
+    checkedSteps(engine, 30);
+    const legacy = engine.exportReplay();
+    expect(legacy.version).toBe(1);
+    expect(legacy.commands[0]).not.toHaveProperty('mode');
+    expect(GameEngine.fromReplay(fixture, legacy).snapshot()).toEqual(engine.snapshot());
+    engine.dispatch('blue', 'a', 'c', 1, 'continuous');
+    checkedSteps(engine, 7);
+    engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    const replay = engine.exportReplay();
+    expect(replay).toMatchObject({ version: 2, endTick: 37 });
+    expect(GameEngine.fromReplay(fixture, replay).snapshot()).toEqual(engine.snapshot());
+    expect(GameEngine.fromReplay(fixture, replay).exportReplay()).toEqual(replay);
+    expect(() => GameEngine.fromReplay(fixture, { ...replay, version: 1 })).toThrow('require replay version 2');
+  });
+
+  it('simulation is frozen without step and after battle completion, including continuous routes', () => {
+    const fixture = map(node('a', 'blue', 10, 0), node('b', 'brown', 0, 1));
+    const engine = new GameEngine(fixture, { ...quiet, emitUnitsPerSecond: 300, packetUnits: 10, movementSpeed: 30 });
+    engine.dispatch('blue', 'a', 'b', 1, 'continuous');
+    const paused = engine.snapshot();
+    engine.step(0);
+    expect(engine.snapshot()).toEqual(paused);
+    checkedSteps(engine, 2);
+    expect(engine.state.winner).toBe('blue');
+    const ended = engine.snapshot();
+    engine.step(10000);
+    expect(engine.dispatch('blue', 'a', 'b', 1, 'continuous').reason).toBe('battle_finished');
+    expect(engine.snapshot()).toEqual(ended);
+    expect(GameEngine.fromReplay(fixture, engine.exportReplay()).snapshot()).toEqual(ended);
+    expect(() => GameEngine.fromReplay(fixture, { ...engine.exportReplay(), endTick: 3 })).toThrow('after battle finished');
+  });
+
+  it('manual continuous routes do not switch the AI to continuous dispatch', () => {
+    const engine = new GameEngine(longMap, { playerAI: true, routeMode: 'any-visible', productionPerSecond: 11, emitUnitsPerSecond: 40 }, 731);
+    engine.dispatch('blue', 'L_SW', 'L_W', 1, 'continuous');
+    checkedSteps(engine, 120);
+    expect(engine.state.ledger.some(e => e.reason === 'ai_fixed_budget')).toBe(true);
+    expect(engine.state.queues.filter(q => q.mode === 'continuous').map(q => q.sourceId)).toEqual(['L_SW']);
+    expect(engine.state.queues.filter(q => q.owner !== 'blue').every(q => q.mode !== 'continuous')).toBe(true);
+    expect(GameEngine.fromReplay(longMap, engine.exportReplay()).snapshot()).toEqual(engine.snapshot());
   });
 });
 

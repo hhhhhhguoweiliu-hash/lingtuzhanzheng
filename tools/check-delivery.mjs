@@ -20,6 +20,25 @@ try{
   const actual=await page.evaluate(()=>({tick:window.lingtu.getState().tick,mode:window.lingtu.getMode(),profile:JSON.parse(localStorage.getItem('lingtu-replica-v1')).profile}));
   if(before.stage!==1||actual.profile.energy!==before.energy-5||errors.length||remote.length)throw Error('Delivered game readback failed');
   const result={file,sha256:createHash('sha256').update(await readFile(file)).digest('hex'),offline:true,requestsToHttp:remote.length,errors,initialStage:before.stage,startEnergy:before.energy,battleEnergy:actual.profile.energy,battleTick:actual.tick};
+  await page.reload();
+  await page.locator('#home-settings').click();
+  if(await page.locator('#dispatch-mode').inputValue()!=='budget')throw Error('Default dispatch mode changed');
+  await page.locator('#dispatch-mode').selectOption('continuous');
+  await page.locator('#close').click();
+  await page.locator('#practice').click();await page.locator('#start').click();
+  const points=await page.evaluate(()=>{
+    const map=window.lingtu.getScene(),box=document.querySelector('#battle').getBoundingClientRect();
+    return [map.nodes.find(n=>n.owner==='blue'),map.nodes.find(n=>n.id==='L_W')].map(n=>({x:box.x+n.anchor.x/map.width*box.width,y:box.y+n.anchor.y/map.height*box.height}));
+  });
+  await page.mouse.click(points[0].x,points[0].y);await page.mouse.click(points[1].x,points[1].y);
+  await page.waitForFunction(()=>window.lingtu.getState().packets.some(p=>p.owner==='blue'));
+  if(await page.locator('#command-routes g path').count()!==1)throw Error('Offline continuous route missing');
+  await page.mouse.click(points[0].x,points[0].y);await page.locator('#stop-orders').click();
+  const stopped=await page.evaluate(()=>window.lingtu.getState());
+  if(stopped.queues.some(q=>q.owner==='blue')||!stopped.packets.some(p=>p.owner==='blue'))throw Error('Offline stop altered travelling troops');
+  result.continuousDispatchAndStop=true;
+  result.requestsToHttp=remote.length;
+  if(remote.length||errors.length)throw Error('Offline continuous check attempted network or errored');
   try{
     const review=await context.newPage();
     review.on('pageerror',e=>errors.push(e.message));
@@ -27,6 +46,10 @@ try{
     await review.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));
     result.reviewImages=await review.locator('img').count();
     await review.screenshot({path:'research/verification/delivery-review.png',fullPage:false});
+    await review.goto(pathToFileURL(join(delivery,'本轮更新-2026-10-05.html')).href);
+    await review.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));
+    result.updateImages=await review.locator('img').count();
+    if(result.updateImages!==2)throw Error('Update screenshots missing');
   }catch(e){if(process.argv[2])throw e;}
   if(errors.length)throw Error(errors.join('\n'));
   await writeFile('research/verification/delivery-readback.json',JSON.stringify(result,null,2));

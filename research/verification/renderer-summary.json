@@ -1,0 +1,49 @@
+{
+  "visualChecks": 42,
+  "exactPixelMatches": true,
+  "errors": [],
+  "summary": [
+    {
+      "dpr": 1,
+      "packets": 200,
+      "beforeMs": 1.9229166667597988,
+      "afterMs": 1.403124999565383,
+      "reductionPercent": 27.031419311076455
+    },
+    {
+      "dpr": 1,
+      "packets": 1000,
+      "beforeMs": 3.9979166669460637,
+      "afterMs": 3.024999999596427,
+      "reductionPercent": 24.33559146926466
+    },
+    {
+      "dpr": 1,
+      "packets": 5000,
+      "beforeMs": 8.95833333209157,
+      "afterMs": 5.847916666883975,
+      "reductionPercent": 34.72093022108368
+    },
+    {
+      "dpr": 2,
+      "packets": 200,
+      "beforeMs": 1.035416666418314,
+      "afterMs": 0.6843750004967053,
+      "reductionPercent": 33.903420459313516
+    },
+    {
+      "dpr": 2,
+      "packets": 1000,
+      "beforeMs": 1.9885416656422117,
+      "afterMs": 1.4062500010865429,
+      "reductionPercent": 29.282346687345584
+    },
+    {
+      "dpr": 2,
+      "packets": 5000,
+      "beforeMs": 7.35833333308498,
+      "afterMs": 5.323958333426466,
+      "reductionPercent": 27.647225364355744
+    }
+  ]
+}

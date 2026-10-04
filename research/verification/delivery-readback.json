@@ -1,6 +1,6 @@
 {
   "file": "C:\\Users\\86182\\Documents\\Codex\\2026-09-26\\new-chat\\outputs\\领土战争.html",
-  "sha256": "69a4f8bf3c414767ab177c9db721cda0cd6c99732776f1453172ace8b3582e85",
+  "sha256": "dc44cda129d2e3636cec0e67e8bf258a709ef3e659a5aef1ee1db6abe7e0d025",
   "offline": true,
   "requestsToHttp": 0,
   "errors": [],
@@ -8,5 +8,7 @@
   "startEnergy": 20,
   "battleEnergy": 15,
   "battleTick": 11,
-  "reviewImages": 14
+  "continuousDispatchAndStop": true,
+  "reviewImages": 14,
+  "updateImages": 2
 }

@@ -1,4 +1,4 @@
-import type { CommandResult, DispatchQueue, GameMap, GameState, LedgerEvent, NodeState, OwnerId, Point, Replay, ReplayCommand, SimConfig, UnitPacket } from './types';
+import type { CommandResult, DispatchMode, GameMap, GameState, LedgerEvent, NodeState, OwnerId, Point, Replay, ReplayCommand, SimConfig, UnitPacket } from './types';
 
 /** Candidate settings from the handoff. They are deliberately replaceable. */
 export const DEFAULT_CONFIG: SimConfig = {
@@ -70,6 +70,7 @@ export class GameEngine {
   private nextId = 1;
   private aiNextTick: number;
   private replaying = false;
+  private replayVersion: Replay['version'] = 1;
 
   constructor(map: GameMap, config: Partial<SimConfig> = {}, seed = 1) {
     this.map = clone(map);
@@ -174,22 +175,36 @@ export class GameEngine {
     return [{ ...this.getNode(sourceId)!.anchor }, { ...this.getNode(targetId)!.anchor }];
   }
 
-  dispatch(owner: OwnerId, sourceId: string, targetId: string, fraction = 1): CommandResult {
-    return this.issueDispatch(owner, sourceId, targetId, fraction, false);
+  dispatch(owner: OwnerId, sourceId: string, targetId: string, fraction = 1, mode: DispatchMode = 'budget'): CommandResult {
+    return this.issueDispatch(owner, sourceId, targetId, fraction, false, mode);
   }
 
-  private issueDispatch(owner: OwnerId, sourceId: string, targetId: string, fraction: number, ai: boolean): CommandResult {
+  private issueDispatch(owner: OwnerId, sourceId: string, targetId: string, fraction: number, ai: boolean, mode: DispatchMode = 'budget'): CommandResult {
     const reject = (reason: string): CommandResult => ({ accepted: false, reason, units: 0 });
     if (this.state.winner !== null) return reject('battle_finished');
     if (owner === 'neutral' || !OWNERS.includes(owner)) return reject('invalid_owner');
+    if (mode !== 'budget' && mode !== 'continuous') return reject('invalid_dispatch_mode');
     const source = this.getNode(sourceId), target = this.getNode(targetId);
     if (!source || !target || source === target) return reject('invalid_target');
     if (source.owner !== owner) return reject('source_not_owned');
     if (!Number.isFinite(fraction) || fraction <= 0 || fraction > 1) return reject('invalid_fraction');
     const path = this.route(sourceId, targetId);
     if (!path) return reject('route_unavailable');
+    const continuous = this.state.queues.find(queue => queue.sourceId === sourceId && queue.mode === 'continuous');
+    if (mode === 'continuous') {
+      if (continuous?.targetId === targetId) return { accepted: true, reason: 'already_continuous', units: 0, commandId: continuous.commandId };
+      this.cancelQueues(sourceId, 'route_replaced');
+      const id = this.nextId++;
+      this.state.queues.push({ id, commandId: id, owner, sourceId, targetId, remainingBudget: 0, path, mode });
+      this.state.stats.commands++;
+      this.replayVersion = 2;
+      this.event({ kind: 'route', owner, nodeId: sourceId, targetId, units: 0, reason: 'player_continuous_route' });
+      if (!this.replaying) this.commands.push({ kind: 'dispatch', tick: this.state.tick, owner, sourceId, targetId, fraction, mode });
+      return { accepted: true, reason: 'continuous_started', units: 0, commandId: id };
+    }
     const budget = Math.floor(this.available(source) * fraction + 1e-9);
     if (budget < 1) return reject('no_available_units');
+    if (continuous) this.cancelQueues(sourceId, 'route_replaced');
     const id = this.nextId++;
     source.reserved += budget;
     this.state.queues.push({ id, commandId: id, owner, sourceId, targetId, remainingBudget: budget, path });
@@ -201,8 +216,9 @@ export class GameEngine {
 
   /** Reserved troops never left the garrison, so cancellation cannot refund them. */
   cancel(sourceId: string): number {
+    const hadQueue = this.state.queues.some(queue => queue.sourceId === sourceId);
     const released = this.cancelQueues(sourceId, 'user_cancelled');
-    if (released > 0 && !this.replaying) this.commands.push({ kind: 'cancel', tick: this.state.tick, sourceId });
+    if (hadQueue && !this.replaying) this.commands.push({ kind: 'cancel', tick: this.state.tick, sourceId });
     return released;
   }
 
@@ -282,23 +298,31 @@ export class GameEngine {
   private emit(): void {
     const denominator = this.config.tickRate * SCALE;
     for (const source of this.state.nodes) {
-      const queues = this.state.queues.filter(queue => queue.sourceId === source.id && queue.remainingBudget > 0);
+      const queues = this.state.queues.filter(queue => queue.sourceId === source.id && (queue.mode === 'continuous' || queue.remainingBudget > 0));
       if (!queues.length) { source.emitRemainder = 0; continue; }
+      // A dormant route keeps sub-unit phase but cannot bank whole emissions.
+      // This permits small garrisons to flow without a later stockpiled burst.
+      if (queues[0].mode === 'continuous' && this.available(source) === 0) {
+        source.emitRemainder %= denominator;
+        continue;
+      }
       // A source has one emission budget, even if several commands were queued.
       source.emitRemainder += Math.round(this.config.emitUnitsPerSecond * SCALE);
       let credit = Math.floor(source.emitRemainder / denominator);
       for (const queue of queues) {
         if (source.owner !== queue.owner) { this.cancelQueues(source.id, 'source_changed_owner'); break; }
-        while (queue.remainingBudget > 0 && source.garrison > 0) {
-          // Keep fractional and whole credits until a full visual/logic batch
-          // is ready; only the final packet may be smaller than packetUnits.
-          const units = Math.min(this.config.packetUnits, queue.remainingBudget, source.garrison);
+        const continuous = queue.mode === 'continuous';
+        while ((continuous || queue.remainingBudget > 0) && source.garrison > 0) {
+          // Wait for an entire batch's credit. A final budget tail or a small
+          // real continuous garrison may form a packet below packetUnits.
+          const units = Math.min(this.config.packetUnits, continuous ? this.available(source) : queue.remainingBudget, source.garrison);
+          if (units < 1) break;
           if (credit < units) break;
           credit -= units;
           source.emitRemainder -= units * denominator;
-          queue.remainingBudget -= units;
+          if (!continuous) queue.remainingBudget -= units;
           source.garrison -= units;
-          source.reserved -= units;
+          if (!continuous) source.reserved -= units;
           const length = pathLength(queue.path);
           const travelTicks = Math.max(1, length / this.config.movementSpeed * this.config.tickRate);
           const exactArrival = this.state.tick + travelTicks;
@@ -312,10 +336,11 @@ export class GameEngine {
           this.state.packets.push(packet);
           this.event({ kind: 'emit', owner: queue.owner, nodeId: source.id, targetId: queue.targetId, units, packetId: packet.id, reason: 'deduct_on_emission' });
         }
+        if (continuous && this.available(source) === 0) source.emitRemainder %= denominator;
         if (queue.remainingBudget > 0) break;
       }
     }
-    this.state.queues = this.state.queues.filter(queue => queue.remainingBudget > 0);
+    this.state.queues = this.state.queues.filter(queue => queue.mode === 'continuous' || queue.remainingBudget > 0);
   }
 
   private moveAndResolve(): void {
@@ -361,7 +386,7 @@ export class GameEngine {
           excess -= removed;
           this.event({ kind: 'cancel', owner: queue.owner, nodeId: target.id, targetId: queue.targetId, units: removed, reason: 'reserved_defenders_lost_in_combat' });
         }
-        this.state.queues = this.state.queues.filter(queue => queue.remainingBudget > 0);
+        this.state.queues = this.state.queues.filter(queue => queue.mode === 'continuous' || queue.remainingBudget > 0);
       }
     }
   }
@@ -462,8 +487,10 @@ export class GameEngine {
       if (!Number.isSafeInteger(node.garrison) || node.garrison < 0 || !Number.isSafeInteger(node.reserved) || node.reserved < 0 || node.reserved > node.garrison || !OWNERS.includes(node.owner)) throw new Error(`Invalid node state: ${node.id}`);
       const reserved = this.state.queues.filter(queue => queue.sourceId === node.id).reduce((n, queue) => n + queue.remainingBudget, 0);
       if (reserved !== node.reserved) throw new Error(`Reservation mismatch: ${node.id}`);
+      const queues = this.state.queues.filter(queue => queue.sourceId === node.id);
+      if (queues.some(queue => queue.mode === 'continuous') && queues.length !== 1) throw new Error(`Continuous route must be exclusive: ${node.id}`);
     }
-    for (const queue of this.state.queues) if (!Number.isSafeInteger(queue.remainingBudget) || queue.remainingBudget <= 0 || this.getNode(queue.sourceId)?.owner !== queue.owner || !this.getNode(queue.targetId)) throw new Error(`Invalid queue: ${queue.id}`);
+    for (const queue of this.state.queues) if (!Number.isSafeInteger(queue.remainingBudget) || (queue.mode === 'continuous' ? queue.remainingBudget !== 0 : queue.remainingBudget <= 0) || (queue.mode !== undefined && queue.mode !== 'budget' && queue.mode !== 'continuous') || this.getNode(queue.sourceId)?.owner !== queue.owner || !this.getNode(queue.targetId)) throw new Error(`Invalid queue: ${queue.id}`);
     for (const packet of this.state.packets) if (!Number.isSafeInteger(packet.units) || packet.units <= 0 || !this.getNode(packet.targetId) || !Number.isFinite(packet.x) || !Number.isFinite(packet.y) || !OWNERS.includes(packet.owner)) throw new Error(`Invalid packet: ${packet.id}`);
     const actual = this.state.nodes.reduce((n, node) => n + node.garrison, 0) + this.state.packets.reduce((n, packet) => n + packet.units, 0);
     const expected = this.state.stats.initialUnits + this.state.stats.produced + this.state.stats.rewarded - this.state.stats.casualties;
@@ -472,21 +499,25 @@ export class GameEngine {
 
   snapshot(): GameState { return clone(this.state); }
   exportReplay(): Replay {
-    return { version: 1, seed: this.seed, config: clone(this.initialConfig), configHash: stableHash(this.initialConfig), mapHash: stableHash(this.map), commands: clone(this.commands), endTick: this.state.tick };
+    return { version: this.replayVersion, seed: this.seed, config: clone(this.initialConfig), configHash: stableHash(this.initialConfig), mapHash: stableHash(this.map), commands: clone(this.commands), endTick: this.state.tick };
   }
 
   static fromReplay(map: GameMap, replay: Replay): GameEngine {
-    if (replay.version !== 1 || stableHash(map) !== replay.mapHash || stableHash(replay.config) !== replay.configHash) throw new Error('Replay version, map or configuration mismatch');
+    if (![1, 2].includes(replay.version) || stableHash(map) !== replay.mapHash || stableHash(replay.config) !== replay.configHash) throw new Error('Replay version, map or configuration mismatch');
     if (!Number.isInteger(replay.endTick) || replay.endTick < 0) throw new Error('Invalid replay end tick');
     const engine = new GameEngine(map, replay.config, replay.seed);
     engine.replaying = true;
+    engine.replayVersion = replay.version;
     let previousTick = 0;
     for (const command of replay.commands) {
       if (!Number.isInteger(command.tick) || command.tick < previousTick || command.tick > replay.endTick) throw new Error('Invalid replay command order');
       engine.step(command.tick - engine.state.tick);
       if (engine.state.tick !== command.tick) throw new Error('Replay command occurs after battle finished');
       switch (command.kind) {
-        case 'dispatch': if (!engine.dispatch(command.owner, command.sourceId, command.targetId, command.fraction).accepted) throw new Error('Replay dispatch rejected'); break;
+        case 'dispatch':
+          if (replay.version === 1 && command.mode === 'continuous') throw new Error('Continuous commands require replay version 2');
+          if (!engine.dispatch(command.owner, command.sourceId, command.targetId, command.fraction, command.mode).accepted) throw new Error('Replay dispatch rejected');
+          break;
         case 'cancel': engine.cancel(command.sourceId); break;
         case 'reward': if (!engine.grantReward(command.id, command.owner, command.targetId, command.units)) throw new Error('Replay reward rejected'); break;
         case 'player-ai': engine.setPlayerAI(command.enabled); break;
@@ -495,6 +526,7 @@ export class GameEngine {
       previousTick = command.tick;
     }
     engine.step(replay.endTick - engine.state.tick);
+    if (engine.state.tick !== replay.endTick) throw new Error('Replay end tick occurs after battle finished');
     engine.replaying = false;
     engine.commands.push(...clone(replay.commands));
     engine.assertInvariants();

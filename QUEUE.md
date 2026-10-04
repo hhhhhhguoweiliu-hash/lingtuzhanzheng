@@ -1,6 +1,6 @@
 # Codex 可执行队列
 
-更新：2026-09-28。状态：READY=可开始；WAIT_DEPENDENCY=等待前置；BLOCKED_EXTERNAL=需外部资料/能力；PARTIAL=已有实现或部分证据，但该行全部验收尚未满足；DONE=该行限定范围已有证据。原工作和验收要求保留，不把功能存在等同于 G3 通过。
+更新：2026-10-05。状态：READY=可开始；WAIT_DEPENDENCY=等待前置；BLOCKED_EXTERNAL=需外部资料/能力；PARTIAL=已有实现或部分证据，但该行全部验收尚未满足；DONE=该行限定范围已有证据。原工作和验收要求保留，不把功能存在等同于 G3 通过。
 
 | 编号 | 阶段/优先级 | 状态 | 依赖 | 工作与具体产物 | 验收 |
 |---|---|---|---|---|---|
@@ -36,8 +36,18 @@
 
 本轮用户已将目标扩展为“做出可从初始游玩的完整游戏”，所以在补发 A 到位后，局外流程与三幅地图并行实现；这不解除原来的 G3 验收门槛。原版前88关未展示，当前三图循环和低等级数值不能标作原版关卡复刻完成。
 
-证据索引：`tests/sim.test.ts`（26项）、`tests/progression.test.ts`（10项）、`tests/browser.spec.ts`（14项）、`tests/ui-progression.spec.ts`（4项）；`research/map-trace/validation.json`、`research/verification/visual-capture.json`、`research/verification/performance.json`。各原始验收项的子范围与剩余项见 `ACCEPTANCE.md`。
+证据索引：`tests/sim.test.ts`（40项）、`tests/progression.test.ts`（10项）、`tests/save.test.ts`（3项）、`tests/browser.spec.ts`（14项）、`tests/ui-progression.spec.ts`（4项）、`tests/continuous-ui.spec.ts`（9项）、`tests/input-safety.spec.ts`（3项）；`research/map-trace/validation.json`、`research/verification/visual-capture.json`、`research/verification/performance.json`。各原始验收项的子范围与剩余项见 `ACCEPTANCE.md`。
 
 T12/T19当前最具体的校准依据：`research/verification/dispatch-calibration.md` / `.json`。关闭AI、SW200/W125时，一次200兵预算90秒未占领；12.5秒队列发完后以实际可用171兵追加指令，15.733秒占领，逐tick守恒均PASS。下一步围绕“额外投入来自重复手势还是持续通道”辨识输入；不能因15.733秒接近原片16.5–17秒就将T12/T19标DONE，原片从SW187且已行动开始。
 
 下一执行顺序：澄清持续发兵与可比输入 → 校准并重做时间/队列对照 → 真机输入和性能 → 用户视觉/体验验收。原片W约17秒，当前采集20秒开蓝方AI后34.467秒记录占领，两者不是同输入测试，不能算作≤10%时间验收通过。禁止用增加候选关卡或外围功能替代这些步骤。
+
+## 2026-10-05增量
+
+T09/T10/T18：可选持续派兵、改派、停止、源易主、旧回放兼容及v2回放已实现，模拟与真实浏览器回归通过。右键、第二指先松开和触摸取消后继续操作均通过桌面Edge验证；T09真机边界仍保留。
+
+T20：地图层缓存与兵流绘制优化，42项同画面/命中/状态对照通过；桌面绘制CPU短基准减少24.3%–34.7%。未用该结果替代安卓55FPS要求。
+
+T24：旧存档默认派兵方式、设置持久化、首页跨标签刷新及旧页面冲突保护通过。没有新增云同步；异常存储端到端全套要求仍未关闭。
+
+本次不将T12/T19/G3标为DONE：持续派兵是用户选定的可玩选项，不能消除原版手势证据缺口。
